@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  我的吴越春秋(1)
-category: essay
+category: blog
 ---
 
 #序言#

@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  Flash system for nexus device
-category: technology 
+category: blog
 ---
 
 # How to flash android binary for nexus 4 in ubuntu #

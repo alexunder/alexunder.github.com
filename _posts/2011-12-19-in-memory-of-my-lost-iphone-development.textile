@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 纪念我那逝去的iphone开发
-category: technology
+category: blog
 ---
 
 h2. 前言
