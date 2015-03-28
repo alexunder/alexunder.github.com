@@ -15,6 +15,7 @@ In this section, I will discuss the details inside the libril.so, these details 
 
 As the last section's show us, it's clear that RIL_startEventLoop create a thread named eventloop, its code will show below:
 
+{% highlight c %}
     static void * eventLoop(void *param) {
         int ret;
         int filedes[2];
@@ -56,9 +57,11 @@ As the last section's show us, it's clear that RIL_startEventLoop create a threa
 
         return NULL;
     }
+{% endhighlight %}
    
 It invokes ril_event_init to initialize two ril_event structure objects: timer_list and pending_list:
 
+{% highlight c %}
     void ril_event_init()
     {
         MUTEX_INIT();
@@ -68,9 +71,11 @@ It invokes ril_event_init to initialize two ril_event structure objects: timer_l
         init_list(&pending_list);
         memset(watch_table, 0, sizeof(watch_table));
     }
+{% endhighlight %}
 
 In the end of this function, it also zeros a ril_event structure pointer array  which has 8 elements: watch_table. We will know these objects later on. So let's check the structure ril_event:
 
+{% highlight c %}
     struct ril_event {
         struct ril_event *next;
         struct ril_event *prev;
@@ -82,6 +87,7 @@ In the end of this function, it also zeros a ril_event structure pointer array  
         ril_event_cb func;
         void *param;
     };
+{% endhighlight %}
 
 We can see that ril_event is a doubly linked list. 
 
@@ -93,6 +99,7 @@ We use ril_event_init to initialize all event tables, including timer_list, pend
 
 We use ril_event_set to fill the ril_event object with input parameters. 
 
+{% highlight c %}
     void ril_event_set(struct ril_event * ev, int fd, bool persist, ril_event_cb func, void * param)
     {
         dlog("~~~~ ril_event_set %x ~~~~", (unsigned int)ev);
@@ -104,6 +111,7 @@ We use ril_event_set to fill the ril_event object with input parameters.
         ev->param = param;
         fcntl(fd, F_SETFL, O_NONBLOCK);
     }
+{% endhighlight %}
 
 The fd maybe the file descriptor of the socket, and set it as non-blocking status via invoking fcntl.
 
@@ -111,6 +119,7 @@ We also use ril_event_add to add the new event to watch_table, and set the fd in
 
 And now, we will go back to the function "eventloop". After initializing ril_event tables, there is a pipe defined, then put the read fd and the related informations into a ril-event, and add it to the watch_table, the implementation of the callback function is below:
 
+{% highlight c %}
 static void processWakeupCallback(int fd, short flags, void *param) {
     char buff[16];
     int ret;
@@ -122,16 +131,20 @@ static void processWakeupCallback(int fd, short flags, void *param) {
         ret = read(s_fdWakeupRead, &buff, sizeof(buff));
     } while (ret > 0 || (ret < 0 && errno == EINTR));
 }
+{% endhighlight %}
 
 We can write some data to the write fd of the pipe to wake up the thread, it seems that no reason to do that. But the interesting thing is that every time  if there is the new ril_event object will be added, the trigger function  "triggerEvLoop" will be invoked. The rilEventAddWakeup detail will show this:
 
+{% highlight c %}
    static void rilEventAddWakeup(struct ril_event *ev) {
        ril_event_add(ev);
        triggerEvLoop();
    } 
+{% endhighlight %}
 
 I guess if rilEventAddWakeup will be called in another thread, this invoking will activate the eventloop thread. The triggerEvLoop function will trigger processWakeupCallback function:
 
+{% highlight c %}
     static void triggerEvLoop() {
         int ret;
         if (!pthread_equal(pthread_self(), s_tid_dispatch)) {
@@ -142,11 +155,13 @@ I guess if rilEventAddWakeup will be called in another thread, this invoking wil
              } while (ret < 0 && errno == EINTR);
         }
     }
+{% endhighlight %}
 
 ## The core part of eventloop ##
 
 The most important part of eventloop is ril_event_loop, it uses select system call to manage some file descriptors. And it has some details need to analysis.
 
+{% highlight c %}
     void ril_event_loop()
     {
         int n;
@@ -187,11 +202,13 @@ The most important part of eventloop is ril_event_loop, it uses select system ca
             firePending();
         }
     }
+{% endhighlight %}
 
 It's a dead loop, but it has an error's return.  So let's start from  calcNextTimeout.
 
 We use this function to check if we have pending timers in timer_list. If there is no element in timer_list, the function returns  -1, and select system call will block itself indefinitely. We should go inside this function:
 	
+{% highlight c %}
 	static int calcNextTimeout(struct timeval * tv)
 	{
 	    struct ril_event * tev = timer_list.next;
@@ -216,9 +233,11 @@ We use this function to check if we have pending timers in timer_list. If there 
 	    }
 	    return 0;
 	}
+{% endhighlight %}
 	
 If we have the pending timer event, we will compare the first element's timeout value with the current time (start from system's booting). If tev->timeout is larger than the current time, the event tev don't overtime, so set the difference between tev's timeout value and the current time into tv. vise versa, if tev->timeout is smaller than the current time, we will set zero to tv. So back to ril_event_loop, the select system call can get the timeout value from calcNextTimeout. I think we should know how to get the pending timer, so let's check the detail of ril_timer_add:
 
+{% highlight c %}
     void ril_timer_add(struct ril_event * ev, struct timeval * tv)
     {
         dlog("~~~~ +ril_timer_add ~~~~");
@@ -246,6 +265,7 @@ If we have the pending timer event, we will compare the first element's timeout 
         MUTEX_RELEASE();
         dlog("~~~~ -ril_timer_add ~~~~");
     }
+{% endhighlight %}
 
 As previous code snippets show us, the timer_list was initialized by init_list in ril_event_init, so if the timer_list has no elements, the timer_list's next pointer and prev pointer all point to itself. We add the relative time interval to the current time, then set this sum to the new ril_event ev, then find the place that keep the larger one located in the back, so the first one is the oldest event.
 
@@ -259,6 +279,7 @@ After that, we can confirm the timeout value that will be passed into select sys
 
 If the data comes, we left three kicks. So let's dive into the first kick:
 
+{% highlight c %}
     static void processTimeouts()
     {
         dlog("~~~~ +processTimeouts ~~~~");
@@ -282,11 +303,13 @@ If the data comes, we left three kicks. So let's dive into the first kick:
         MUTEX_RELEASE();
         dlog("~~~~ -processTimeouts ~~~~");
     }
+{% endhighlight %}
 
 It's simple to interprate: we traverse the time_list to find the event whose timeout is smaller then the current time,  in other words, we want to find the timeout event, and remove it from the timer_list, then add to the pending_list.
 
 The second kick:
 
+{% highlight c %}
     static void processReadReadies(fd_set * rfds, int n)
     {
         dlog("~~~~ +processReadReadies (%d) ~~~~", n);
@@ -306,11 +329,13 @@ The second kick:
         MUTEX_RELEASE();
         dlog("~~~~ -processReadReadies (%d) ~~~~", n);
     }
+{% endhighlight %}
 
 In this function, we scan watch_table to check if any element is ready for receiving data, then add it to the pending_list. Whether we delete the ready item from watch_table depends on persist value in this item.
 
 The final kick:
 
+{% highlight c %}
     static void firePending()
     {
         dlog("~~~~ +firePending ~~~~");
@@ -323,6 +348,7 @@ The final kick:
         }
         dlog("~~~~ -firePending ~~~~");
     }
+{% endhighlight %}
 
 And now, the pending_list includes all the events will be ready to read, so we traverse the pending_list, fire all of them, invoking their own callback functions.
 
