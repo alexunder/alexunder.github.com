@@ -18,21 +18,23 @@ category: blog
 * Run these commonds in termial
 
 
-1. Using the adb tool: With the device powered on, execute:
+	1. Using the adb tool: With the device powered on, execute:
 
-{% highlight bash %}
-    adb reboot bootloader
-{% endhighlight %}
+	{% highlight bash %}
+    	adb reboot bootloader
+	{% endhighlight %}
 
-To make the phone transfor into fastboot mode.
+	To make the phone transfor into fastboot mode.
 
-2. The phone also need be unlocked, execute:
+	
+	2. The phone also need be unlocked, execute:
 
-   {% highlight bash %}
+   	{% highlight bash %}
        fastboot oem unlock
-   {% endhighlight %}
+   	{% endhighlight %}
 
-3. Finally, run flash-all.sh in the current directory, if there is the message "waiting for device" stuck in terminal, make sure run the script under the sudo mode.
+	
+	3. Finally, run flash-all.sh in the current directory, if there is the message "waiting for device" stuck in terminal, make sure run the script under the sudo mode.
 
 
 # How to flash revocery mode binary #
