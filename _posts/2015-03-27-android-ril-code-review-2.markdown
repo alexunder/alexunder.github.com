@@ -352,6 +352,6 @@ The final kick:
 
 And now, the pending_list includes all the events will be ready to read, so we traverse the pending_list, fire all of them, invoking their own callback functions.
 
-# Communications with frameworks #
+# Temporary End #
 
-In last section, we have talked about the ril event mechanism. Now, I will discuss the communication with framwwork based on ril event mechanism.
+This note is long enough, the left content will be delivered in the following post.
