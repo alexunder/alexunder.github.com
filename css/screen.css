@@ -18,7 +18,7 @@ html, body {
 body {
   color: #000;
   background-color: #fdfdfd;
-  font-family: "Microsoft Yahei", "Segoe UI" ! important;
+  font-family: "Microsoft Consola", "Segoe UI" ! important;
   /*font: 13.34px "Segoe UI", arial, clean, sans-serif;*/
   position: relative;
   font-size: 18px;
