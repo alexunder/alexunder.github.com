@@ -113,7 +113,7 @@ void ifs::renderImage(Image &img, int numPoints, int numIters, Vec3f color)
 ![alt text](/images/notes/mit_graphic/sierpinski_triangle.png"sierpinski_triangle.png")
 
 
-##参看资料##
+##参考资料##
 
 1. [Wikipedia: Iterated function system](https://en.wikipedia.org/wiki/Iterated_function_system "Wikipedia: Iterated function system").
 2. [MIT 6.837 Intro to Computer Graphics](http://groups.csail.mit.edu/graphics/classes/6.837/F04/assignments/assignment0/ "MIT 6.837 Intro to Computer Graphics").
