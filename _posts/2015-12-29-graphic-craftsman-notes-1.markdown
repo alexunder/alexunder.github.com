@@ -60,7 +60,7 @@ $$
 0.289067 0.107000 -0.004534 
 0.000000 0.000000 1.000000
 
-第一个行的数字为4，说明总共有四个函数系统，第一个函数被用到的概率是0.03，0.03后面是变换矩阵。而我的工作主要是解析程序命令行以及参数，比如随机点的数量，图片的分辨率还有迭代次数。然后实现一个ifs类，主要用来渲染分形图片, 这里代码细节就不详述了，列一些最关键的渲染图片的函数：
+第一个行的数字为4，说明总共有四个函数系统，第一个函数被用到的概率是0.03，0.03后面是变换矩阵。而我的工作主要是解析程序命令行以及参数，比如随机点的数量，图片的分辨率还有迭代次数。然后实现一个ifs类，主要用来渲染分形图片, 这里代码细节就不详述了，列个最关键的渲染图片的函数：
 
 {% highlight cpp %}
 void ifs::renderImage(Image &img, int numPoints, int numIters, Vec3f color)
@@ -109,6 +109,7 @@ void ifs::renderImage(Image &img, int numPoints, int numIters, Vec3f color)
 ![alt text](/images/notes/mit_graphic/fern_100.png"fern_100.png") ![alt text](/images/notes/mit_graphic/fern_30.png"fern_30.png")
 
 以及
+
 ![alt text](/images/notes/mit_graphic/sierpinski_triangle.png"sierpinski_triangle.png")
 
 
