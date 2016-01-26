@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  图形匠人笔记0—MIT 6.837之assignment 0
+title:  图形匠人笔记0—MIT 6.837之assignment 0--Iterated Function System
 category: wheel
 ---
 
