@@ -10,7 +10,7 @@ category: wheel
 
 * 理解Ray tracing的基本方法，并且用面向对象的方法设计实现Ray tracing的基础架构。
 * 实现基本的3D的圆球体类，即Sphere。
-* 实现平行投影的类，即OrthographicCamera。
+* 实现平行投影的类，即OrthographicCamera。    
 
 #Ray Tracing 基本原理#
 
@@ -25,7 +25,7 @@ category: wheel
         find first object hit by ray and its surface normal n
         set pixel color to value computed from hit point, light, and n
 
-#圆球类的实现以及总体渲染流程#
+#光线类与圆球类的实现#
 
 从现在开始，我们将用代码将Ray Tracing的奥妙展示出来。
 
@@ -60,6 +60,79 @@ private:
 $$
 \vec{p}(t)=\vec{o} + t\vec{d}
 $$
+
+上面函数中，除了t是标量以外其他都是三维向量，其中`\(\vec{o}\)`虽然不表示方向，但是他表示三维坐标系中的一个点，也是由三个标量组成，所以可以看做为向量。
+
+神说：要有球。
+
+有了光线，必须还要有球来被光纤普照。为了软件的扩展性，我们必须用面向对象(Object Oriented)的方法来设计球体，因为我们的渲染程序不仅只处理圆球体，还要处理其他物体，比如平面体，正方体，长方体等，所以我们需要一个基类来抽象出所有物体的共同的属性和方法。我们的基类叫Object3D，定义如下：
+
+{% highlight cpp %}
+class Object3D
+{
+public:
+    Object3D(Material * m)
+        :mMaterial(m)
+    {
+    }
+
+    Object3D()
+    {
+        mMaterial = NULL;
+    }
+
+    virtual ~Object3D()
+    {
+    }
+
+    virtual bool intersect(const Ray &r, Hit &h, float tmin) = 0;
+protected:
+    Material * mMaterial;
+};
+{% endhighlight %}
+
+然后不同的物体，比如球体，三角形去继承这个基类，实现不同的代码流程。比如Ray Tracing渲染中最重要的intersect方法，接下来我们要着重分析球体的intersect方法。从基类的函数定义可以知道，intersect的输入参数里有Ray对象，Hit对象以及一个float变量。Ray对象就是用来和球体求交点的光线，交点求出来以后，要把光线与物体的交点上的相关信息存入Hit对象，比如代表交点的t值，交点位于球体上的法线以及物体在交点上的颜色信息，Hit类定义如下：
+
+{% highlight cpp %}
+class Hit {
+public:
+  // CONSTRUCTOR & DESTRUCTOR
+  Hit() { material = NULL; }
+  Hit(float _t, Material *m) { 
+    t = _t; material = m; }
+  Hit(const Hit &h) { 
+    t = h.t; 
+    material = h.material; 
+    intersectionPoint = h.intersectionPoint; }
+  ~Hit() {}
+
+  // ACCESSORS
+  float getT() const { return t; }
+  Material* getMaterial() const { return material; }
+  Vec3f getIntersectionPoint() const { return intersectionPoint; }
+  
+  // MODIFIER
+  void set(float _t, Material *m, const Ray &ray) {
+    t = _t; material = m; 
+    intersectionPoint = ray.pointAtParameter(t); }
+
+  void set(float _t, Material *m, const Vec3f &p) {
+    t = _t; material = m;
+    intersectionPoint = p; }
+private: 
+  // REPRESENTATION
+  float t;
+  Material *material;
+  Vec3f intersectionPoint;
+};
+{% endhighlight %}
+
+接下来看看如何求Ray在球体上的交点，其实这是一个高中立体几何问题，即将光线函数代入球体方程。假设球体方程为`\(f(\vec{p})=0\)`，我们将射线函数代作为`\( \vec{p}\)`代入方程中，球体方程如下：
+
+$$
+(x-
+$$
+
 
 #平行投影#
 
