@@ -127,12 +127,80 @@ private:
 };
 {% endhighlight %}
 
-接下来看看如何求Ray在球体上的交点，其实这是一个高中立体几何问题，即将光线函数代入球体方程。假设球体方程为`\(f(\vec{p})=0\)`，我们将射线函数代作为`\( \vec{p}\)`代入方程中，球体方程如下：
+接下来看看如何求Ray在球体上的交点，其实这是一个高中立体几何问题，即将光线函数代入球体方程。假设球体方程为`\(f(\vec{p})=0\)`，我们将射线函数代作为`\( \vec{p}\)`代入方程中，得到：
 
 $$
-(x-
+f(\vec{p}(t))=0 或者 f(\vec{o} + t\vec{d})=0
 $$
 
+稍微知道立体几何的球体方程如下：
+
+$$
+(x-o_x)^2+(x-o_y)^2+(x-o_z)^2-R^2=0
+$$
+
+上面的球体方程是单变量形式，也叫标量形式，我们可以写成向量的形式：
+
+$$
+(\vec{p}-\vec{c}).(\vec{p}-\vec{c})-R^2=0
+$$
+
+任何满足上面方程的点即`\( \vec{p}\)`都在圆球上，另外`\( \vec{c}\)`是球体的中心坐标。如果我们把光射线的函数方程代入圆球体方程，得出t值，我们就能确定了光线和球体的交点，这样球体的intersect接口就可以解决了。
+
+$$
+(\vec{o} + t\vec{d}-\vec{c}).(\vec{o} + t\vec{d}-\vec{c})-R^2=0
+$$
+
+重新调整系数得到：
+
+$$
+(\vec{d}.\vec{d})t^2+2\vec{d}.(\vec{o}-\vec{c})t+(\vec{o}-\vec{c}).(\vec{o}-\vec{c})-R^2=0
+$$
+
+这个方程其实就是一元二次方程，最终可以简写成这个样子：
+
+$$
+At^2 + Bt + C = 0
+$$
+
+我相信学过初中数学的对这个式子再熟悉不过了，只要我们判断一下`\( B^2-4AC\)`是否大于0，或者等于0就能求出交点。大于0一般有两个交点，即光线穿过球体而过，等于0有一个交点，即此光线为球体的切线，初中数学的东西我就不详细叙述了，最后t的解为如下形式：
+
+$$
+t=  \cfrac{-B\pm\sqrt{B^2-4AC}}{2A}
+$$
+
+有了数学原理，就可以列代码了，代码也很清楚的表达了我刚才说地东西：
+
+{% highlight cpp %}
+bool Sphere::intersect(const Ray &r, Hit &h, float tmin)
+{
+    Vec3f temp = r.getOrigin() - mCenterPoint;
+    Vec3f rayDirection = r.getDirection();
+
+    double a = rayDirection.Dot3(rayDirection);
+    double b = 2*rayDirection.Dot3(temp);
+    double c = temp.Dot3(temp) - mRadius*mRadius;
+
+    double discriminant = b*b - 4*a*c;
+
+    if (discriminant > 0)
+    {
+        discriminant = sqrt(discriminant);
+        double t = (- b - discriminant) / (2*a);
+
+        if (t < tmin)
+            t = (- b + discriminant) / (2*a);
+
+        if (t < tmin || t > T_MAX)
+            return false;
+
+        h.set(t, mMaterial, r);
+        return true;
+    }
+
+    return false;
+}
+{% endhighlight %}
 
 #平行投影#
 
