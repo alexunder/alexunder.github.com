@@ -204,6 +204,11 @@ bool Sphere::intersect(const Ray &r, Hit &h, float tmin)
 
 #平行投影#
 
+神說：要有人。
+
+这个人就是观察者，即抽象为观察者，我们设计的类叫Camera，也用到了所谓的面向对象，
+
+
 #尾声#
 
 #参考资料#
