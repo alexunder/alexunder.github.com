@@ -4,9 +4,11 @@ auto:        true
 lsi:         false
 server_port: 4000
 permalink:   date
-markdown: rdiscount 
+markdown: kramdown 
 pygments: true
 
-rdiscount: 
+kramdown:
+  input:  GFM
+rdiscount:
   extensions: 
       - smart
