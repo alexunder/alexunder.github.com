@@ -4,15 +4,15 @@ title:  图形匠人笔记0—MIT 6.837之assignment 0--Iterated Function System
 category: wheel
 ---
 
-#Why I want to write this note?#
+# Why I want to write this note? #
 
 写这个笔记有几个原因吧：第一，我写blog效率太低，自2011年建立以来到现在三四年了，不过寥寥十来篇，实在对不住当年开github blog时候的豪情壮志，离每周一篇的速度相差太大，需要迎头赶上；第二，在下做技术（特指软件开发从业时间）已近十年，居然没有特别精深的钻研方向，实在惭愧，当然过去的若干年间也曾上下求索，找寻方向，比如曾经的模式识别，无线通信，由于种种原因都暂且搁置，当然最主要的原因还是自己的持久力很差，面对理解深一层的知识时候的挫败感，无力前行。然而如今我已过而立之年，痛定思痛，终于选择了集兴趣，数学，艺术，趣味性的图形学作为深入研究的方向。具体方法还是得Learning by doing, 之前看了几章PBRT，以及基础书籍，看到中部渐觉吃力，再后来看到了MIT OCW的Computer Graphic的assignments, 于是决定好好编程实现，并且写笔记记录，好好的实践Learning by doing的精神。
 
-#Assignment 0: Iterated Function System#
+# Assignment 0: Iterated Function System #
 
 第一个任务是要实现一个 Iterated Function Systems, 英文直翻译应该叫做函数迭代系统，严格来说是分形数学的一个东西。当然分形图形不是MIT这门课所包含的内容，这个习作工程难度不是很大，主要是让初学者熟悉C++的用法以及后续Ray Tracing主要用到的代码流程，即逐个像素颜色的生成，最后生成一个位图。也正如知乎上的图形大牛所言，图形学的研究与学习可以抛开OpenGL或者DirectX，直面数学原理。
 
-##什么是Iterated Function System##
+## 什么是Iterated Function System ##
 
 其实我也不太懂，我先抄一下维基百科吧：
 
@@ -30,7 +30,7 @@ $$
 
 装逼结束，以上的罗列公式除了装逼还有测试Latex的支持。
 
-##代码实现##
+## 代码实现 ##
 
 上文中的函数系统放到图形学的语境当中，其实就是仿射变换(Affine Transformation)。算法流程其实已经在assignment的描述里被描述的很清楚了：在单位矩形(对角线为(0,0)到(1,1))，随机生成一定数量的2D的点，对每一个点再做若干次仿射变化，相当于上文中的IFS计算公式里的连乘，具体伪代码如下：
 
@@ -113,7 +113,7 @@ void ifs::renderImage(Image &img, int numPoints, int numIters, Vec3f color)
 ![alt text](/images/notes/mit_graphic/sierpinski_triangle.png"sierpinski_triangle.png")
 
 
-##参考资料##
+# 参考资料 #
 
 1. [Wikipedia: Iterated function system](https://en.wikipedia.org/wiki/Iterated_function_system "Wikipedia: Iterated function system").
 2. [MIT 6.837 Intro to Computer Graphics](http://groups.csail.mit.edu/graphics/classes/6.837/F04/assignments/assignment0/ "MIT 6.837 Intro to Computer Graphics").

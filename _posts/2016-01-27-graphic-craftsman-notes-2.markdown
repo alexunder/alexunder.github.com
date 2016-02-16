@@ -4,7 +4,7 @@ title:  图形匠人笔记1—MIT 6.837之assignment 1--Ray Casting
 category: wheel
 ---
 
-#前言#
+# 前言 #
 
 这是MIT Graphic的第二个编程作业，其实写此文时，我已经做到了第六个作业。但是写技术笔记远远比写代码要麻烦得多，当然相应的收获也会更大。言归正传，这个作业主要要求以下几个方面：
 
@@ -12,7 +12,7 @@ category: wheel
 * 实现基本的3D的圆球体类，即Sphere。
 * 实现平行投影的类，即OrthographicCamera。    
 
-#Ray Tracing 基本原理#
+# Ray Tracing 基本原理 #
 
 按我目前肤浅的理解，目前图像学有两大渲染方式，即实时渲染(_Real time rendering_)和光线跟踪(_Ray Tracing_)。虽然他们背后的数学原理大同小异，但是实现起来确实有不同。前者为了达到Real time的要求，更多得关注在性能上，很多计算都搬到了硬件里去做，GPU就是在这个背景下应运而生。他的渲染方式主要是将需要绘制的模型的三维坐标作为输入，加上材质，颜料，光照，经过3D到2D的变换矩阵，还加上深度信息(Z-buffer), 绘制到一块2D区域上，表现为一个多边形，最后送到屏幕上显示出来，总体流程是从Objects到Pixels。而Ray Tracing不考虑性能，更多的考虑如何绘制的逼真，所以反其道而行之，即从Pixels到Objects的过程，好莱坞的CGI电脑特效就是用的这种方法。这种方法更多的应用了光线传递的原理，即我们人眼看到的东西都是因为有光纤照到了眼睛里。如下图：
 
@@ -25,7 +25,7 @@ category: wheel
         find first object hit by ray and its surface normal n
         set pixel color to value computed from hit point, light, and n
 
-#光线类与圆球类的实现#
+# 光线类与圆球类的实现 #
 
 从现在开始，我们将用代码将Ray Tracing的奥妙展示出来。
 
@@ -202,16 +202,16 @@ bool Sphere::intersect(const Ray &r, Hit &h, float tmin)
 }
 {% endhighlight %}
 
-#平行投影#
+# 平行投影 #
 
 神說：要有人。
 
 这个人就是观察者，即抽象为观察者，我们设计的类叫Camera，也用到了所谓的面向对象，
 
 
-#尾声#
+# 尾声 #
 
-#参考资料#
+# 参考资料 #
 
 1. [Scratchapixel 2.0](http://www.scratchapixel.com "Scratchapixel 2.0").
 
