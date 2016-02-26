@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  图形匠人笔记1—MIT 6.837之assignment 1--Ray Casting
-category: wheel
+category: graphic
 ---
 
 # 前言 #
@@ -206,7 +206,22 @@ bool Sphere::intersect(const Ray &r, Hit &h, float tmin)
 
 神說：要有人。
 
-这个人就是观察者，即抽象为观察者，我们设计的类叫Camera，也用到了所谓的面向对象，
+这个人就是观察者，即抽象为观察者，我们设计的基类叫Camera，也用到了所谓的面向对象，只定义了接口，代码如下：
+
+{% highlight cpp %}
+class Camera
+{
+public:
+    Camera() {};
+    virtual Ray generateRay(Vec2f point) = 0;
+    virtual float getTMin() const = 0;
+};
+{% endhighlight %}
+
+Camera里的两个方法都是虚函数，需要不同的继承类去实现。generateRay是非常关键的函数，不同的基类会有完全不同的实现，我们的平行投影相机的继承关系为：
+
+![classOrthographicCamera__inherit__graph.png](/images/notes/mit_graphic/classOrthographicCamera__inherit__graph.png  "classOrthographicCamera__inherit__graph.png")
+
 
 
 # 尾声 #
