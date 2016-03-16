@@ -14,7 +14,7 @@ category: graphic
 
 # Ray Tracing 基本原理 #
 
-按我目前肤浅的理解，目前图像学有两大渲染方式，即实时渲染(_Real time rendering_)和光线跟踪(_Ray Tracing_)。虽然他们背后的数学原理大同小异，但是实现起来确实有不同。前者为了达到Real time的要求，更多得关注在性能上，很多计算都搬到了硬件里去做，GPU就是在这个背景下应运而生。他的渲染方式主要是将需要绘制的模型的三维坐标作为输入，加上材质，颜料，光照，经过3D到2D的变换矩阵，还加上深度信息(Z-buffer), 绘制到一块2D区域上，表现为一个多边形，最后送到屏幕上显示出来，总体流程是从Objects到Pixels。而Ray Tracing不考虑性能，更多的考虑如何绘制的逼真，所以反其道而行之，即从Pixels到Objects的过程，好莱坞的CGI电脑特效就是用的这种方法。这种方法更多的应用了光线传递的原理，即我们人眼看到的东西都是因为有光纤照到了眼睛里。如下图：
+按我目前肤浅的理解，目前图像学有两大渲染方式，即实时渲染(_Real time rendering_)和光线跟踪(_Ray Tracing_)。虽然他们背后的数学原理大同小异，但是实现起来确实有不同。前者为了达到Real time的要求，更多得关注在性能上，很多计算都搬到了硬件里去做，GPU就是在这个背景下应运而生。他的渲染方式主要是将需要绘制的模型的三维坐标作为输入，加上材质，颜料，光照，经过3D到2D的变换矩阵，还加上深度信息(Z-buffer), 绘制到一块2D区域上，表现为一个多边形，最后送到屏幕上显示出来，总体流程是从Objects到Pixels。而Ray Tracing不考虑性能，更多的考虑如何绘制的逼真，所以反其道而行之，即从Pixels到Objects的过程，好莱坞的CGI电脑特效就是用的这种方法。这种方法更多的应用了光线传递的原理，即我们人眼看到的东西都是因为有光线照到了眼睛里。如下图：
 
 ![lighttoeye.png](/images/notes/mit_graphic/lighttoeye.png  "lighttoeye.png")
 
@@ -222,9 +222,47 @@ Camera里的两个方法都是虚函数，需要不同的继承类去实现。ge
 
 ![classOrthographicCamera__inherit__graph.png](/images/notes/mit_graphic/classOrthographicCamera__inherit__graph.png  "classOrthographicCamera__inherit__graph.png")
 
+平行投影相对简单，就是在我们定义的三维空间中的一个矩形显示板上，每一个像素点出发的光线都是平行的，而且垂直于我们的显示板，如下图：
 
+![ortho.png](http://groups.csail.mit.edu/graphics/classes/6.837/F04/assignments/assignment1/ortho.png  "ortho.png")
+
+我们需要做的就是把屏幕空间的坐标转换成三维世界坐标系统里对应的三维坐标：
+
+* 首先在调用Ray OrthographicCamera::generateRay之前，必须得把屏幕坐标转为长宽都为1的矩形内的坐标，才可以将此坐标输入到generateRay里，即：
+
+{% highlight cpp %}
+float u = (i + 0.5) / width;
+float v = (j + 0.5) / height;
+Vec2f p(u, v);
+Ray r = pCamera->generateRay(p);
+{% endhighlight %}
+
+具体原理不赘述，需要说一点，屏幕坐标的原点在左上角。现在进入OrthographicCamera::generateRay的代码：
+
+{% highlight cpp %}
+Ray OrthographicCamera::generateRay(Vec2f point)
+{
+    float x = point.x();
+    float y = point.y();
+
+    float l = - mCameraSize / 2.0;
+    float t = - mCameraSize / 2.0;
+
+    float u = x * mCameraSize + l;
+    float v = y * mCameraSize + t;
+
+    Vec3f originalPoint = mCenter + u * mHorizontal + v * mUp;
+    Ray r(originalPoint, mDirection);
+
+    return r;
+}
+{% endhighlight %}
+
+* 从代码可知，generateRay里需要将长宽为1的空间转化到上下左右都是从-1到1的空间，当然中间就是（0，0）的原点，当然可以直接加上CameraSize的比例，即最后映射到高和宽都是CameraSize，X坐标与Y坐标都是[-CameraSize/2, CameraSize/2]的范围，最后originalPoint是得到的最终的点的三维坐标，再加上垂直于显示平面的方向，就生成了一条光线！
 
 # 尾声 #
+
+貌似没啥写的，先这样！
 
 # 参考资料 #
 
