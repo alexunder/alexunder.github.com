@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  Android RIL code review 2
-category: android
+category: Android
 ---
 
 #Overview#
