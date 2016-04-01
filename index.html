@@ -3,6 +3,21 @@ layout: default
 title: Alexunder Hacking
 ---
 
+{% for category in site.categories %}
+{% capture cat %}{{ category | first }}{% endcapture %}
+
+<h2>{{ cat | capitalize }}</h2>
+    <ul>
+    {% for post in site.categories[cat] %}
+        <li>
+        <p><a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+        <span class="date"> - {{ post.date | date_to_long_string }}</span></p>
+        </li>
+    {% endfor %}
+</ul>
+{% endfor %}
+
+
 <div id="blog">
   <h1>Blog Posts</h1>
   <ul class="posts">
