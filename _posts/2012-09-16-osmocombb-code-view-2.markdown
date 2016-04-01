@@ -1,7 +1,7 @@
 ---
 layout: post
 title: OsmocomBB 代码分析(2)
-category: technology
+category: Communication 
 ---
 
 # 开始 #
