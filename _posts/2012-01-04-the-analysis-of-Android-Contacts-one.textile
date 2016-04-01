@@ -1,7 +1,7 @@
 ---
 layout: post
-title: Android Contacts 代码分析-1
-category: technology
+title: Android Contacts 代码分析
+category: Android 
 ---
 
 h2. 前言

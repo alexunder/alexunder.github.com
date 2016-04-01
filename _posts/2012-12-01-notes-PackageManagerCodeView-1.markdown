@@ -1,7 +1,7 @@
 ---
 layout: post
 title: PackageManager Code View Part 1
-category: notes
+category: Android
 ---
 
 # PackageManager Code View Part 1#
