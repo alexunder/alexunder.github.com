@@ -18,7 +18,8 @@ html, body {
 body {
   color: #000;
   background-color: #fdfdfd;
-  font-family: "Calibri" "Microsoft Consola", "Segoe UI" ! important;
+  /*font-family: "Calibri" "Microsoft Consola", "Segoe UI" ! important;*/
+  font-family: "Calibri" ! important;
   /*font: 13.34px "Segoe UI", arial, clean, sans-serif;*/
   position: relative;
   font-size: 18px;
