@@ -110,7 +110,7 @@ void ifs::renderImage(Image &img, int numPoints, int numIters, Vec3f color)
 
 以及
 
-![sierpinski_triangle.png](/images/notes/mit_graphic/sierpinski_triangle.png" sierpinski_triangle.png")
+![sierpinski_triangle.png](/images/notes/mit_graphic/sierpinski_triangle.png "sierpinski_triangle.png")
 
 
 # 参考资料 #
