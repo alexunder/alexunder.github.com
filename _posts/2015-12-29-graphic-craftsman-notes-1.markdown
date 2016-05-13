@@ -106,11 +106,11 @@ void ifs::renderImage(Image &img, int numPoints, int numIters, Vec3f color)
 
 最后生成的图片效果如下：
 
-![alt text](/images/notes/mit_graphic/fern_100.png"fern_100.png") ![alt text](/images/notes/mit_graphic/fern_30.png"fern_30.png")
+![fern_100.png](/images/notes/mit_graphic/fern_100.png"fern_100.png") ![fern_30.png](/images/notes/mit_graphic/fern_30.png"fern_30.png")
 
 以及
 
-![alt text](/images/notes/mit_graphic/sierpinski_triangle.png"sierpinski_triangle.png")
+![sierpinski_triangle.png](/images/notes/mit_graphic/sierpinski_triangle.png"sierpinski_triangle.png")
 
 
 # 参考资料 #
