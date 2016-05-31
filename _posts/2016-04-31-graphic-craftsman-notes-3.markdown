@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  图形匠人笔记2—MIT 6.837之assignment 2--Transformations & Additional Primitives
-category: Graphic
+category: graphic
 ---
 
 # 前言 #
