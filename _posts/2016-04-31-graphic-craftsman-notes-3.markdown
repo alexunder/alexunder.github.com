@@ -309,8 +309,8 @@ Det(A)表示矩阵A的秩(Determinant)，代码只是一些繁琐的操作，就
 
 # 尾声 #
 每一次留尾声这个Section，总是想得写点啥，貌似也没啥可写。总之，这次是Latex大爆发，哈哈！
+
 # 参考 #
 
 1. [Scratchapixel 2.0](http://www.scratchapixel.com "Scratchapixel 2.0").
-2. [Physically Based Rendering, Second Edition: From Theory To Implementation](http://pbrt.org/) 
-
+2. [Physically Based Rendering, Second Edition: From Theory To Implementation](http://pbrt.org/).
