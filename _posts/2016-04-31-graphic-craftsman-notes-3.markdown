@@ -205,11 +205,11 @@ $$
 上个方程中，a, b, c三个系数可以组成平面的法向量，即：
 
 $$
-\vec{n}=\left[\begin{array}{l}
-    a &\\
-    b &\\
-    c &
-\end{array}\right]
+\vec{n}=\begin{bmatrix}
+    a \\
+    b \\
+    c
+\end{bmatrix}
 $$
 
 这个结论很容易理解，法向量就是垂直于平面的向量，可以知道平面上任意两点组成的向量都和法向量垂直，所以假设任意平面任意两个点：`\((X_{1}, Y_{1}, Z_{1})\)`, `\((X_{2}, Y_{2}, Z_{2})\)`, 代入平面方程得到两个式子：
@@ -237,11 +237,16 @@ t就可以轻松求出来。
 
 ## Triangle类 ##
 
-在图形学中，在处理复杂模型的时候，有一种通用办法是被广泛接受的。那就是将复杂模型的表面用小三角形来分割，类似于积分的思路。所以三角形Triangle类的instersect方法的实现很关键，他是渲染复杂模型的基础。三角形求教点用到了 Barycentric coordinates。通俗来讲，已知有三角形的三个顶点的坐标：P0, P1, P2，三角形里任意一点可以表示为：
+在图形学中，在处理复杂模型的时候，有一种通用办法是被广泛接受的。那就是将复杂模型的表面用小三角形来分割，类似于积分的思路。所以三角形Triangle类的instersect方法的实现很关键，他是渲染复杂模型的基础。三角形求教点用到了 Barycentric coordinates。可以借助[ScratchaPixel](http://www.scratchapixel.com)的图看一下：
+
+![ScratchPixel-Triangle](http://www.scratchapixel.com/images/upload/ray-triangle/triray2.png  "ScratchPixel-Triangle")
+
+通俗来讲，已知有三角形的三个顶点的坐标：P0, P1, P2，三角形里任意一点可以表示为：
 
 $$
 p(b_{1}, b_{2})=(1-b_{1}-b_{2})p_{0}+b_{1}p_{1}+b_{2}p_{2}, b_{1}\ge0, b_{2}\ge0, b_{1}+b_{2}\le1
 $$
+
 
 将参数化的射线`\(\vec{o} + t\vec{d}\)`代入上式得到：
 
@@ -249,8 +254,63 @@ $$
 \vec{o} + t\vec{d}=(1-b_{1}-b_{2})p_{0}+b_{1}p_{1}+b_{2}p_{2}
 $$
 
-为了方便简洁，设`\(\vec{e_{1}}=p_{1}-p_{0}\)`, `\(\vec{e_{2}}=p_{2}-p_{0}\)`, `\(\vec{s}=o-p_{0}\)`
+为了方便简洁，设`\(\vec{e_{1}}=p_{1}-p_{0}\)`, `\(\vec{e_{2}}=p_{2}-p_{0}\)`, `\(\vec{s}=o-p_{0}\)`,重新整理得到：
+
+$$
+\begin{pmatrix}
+-\vec{d} & \vec{e_{1}} & \vec{e_{2}}
+\end{pmatrix}
+\begin{bmatrix}
+    t \\
+    b_{1} \\
+    b_{2}
+\end{bmatrix}=\vec{s}.
+$$
+
+这是一个`\(Ax=B\)`型的线性方程，我们可以用克莱默法则(Cramer's rule)得到解，至于这个法则的证明在此处略去，以后单独开文章论述，毕竟直接给出结论显得很突兀。首先我们简化成`\(Ax=B\)`型，即设
+
+$$
+A=\begin{pmatrix}
+-\vec{d} & \vec{e_{1}} & \vec{e_{2}}
+\end{pmatrix},
+x=\begin{bmatrix}
+    t \\
+    b_{1} \\
+    b_{2}
+\end{bmatrix},
+b=\vec{s}
+$$
+
+根据法则的定义，矩阵A的秩必须大于0，x才会有唯一解，所以省去一些计算，我们直接得到：
+
+$$
+\begin{bmatrix}
+    t \\
+    b_{1} \\
+    b_{2}
+\end{bmatrix}=\frac{1}{Det
+\begin{pmatrix}
+-\vec{d} & \vec{e_{1}} & \vec{e_{2}}
+\end{pmatrix}
+}\begin{bmatrix}
+Det\begin{pmatrix}
+\vec{s} & \vec{e_{1}} & \vec{e_{2}}
+\end{pmatrix} \\
+Det\begin{pmatrix}
+-\vec{d} & \vec{s} & \vec{e_{2}}
+\end{pmatrix} \\
+Det\begin{pmatrix}
+-\vec{d} & \vec{e_{1}} & \vec{s}
+\end{pmatrix}
+\end{bmatrix}
+$$
+
+Det(A)表示矩阵A的秩(Determinant)，代码只是一些繁琐的操作，就不在这罗列了。
 
 # 尾声 #
-
+每一次留尾声这个Section，总是想得写点啥，貌似也没啥可写。总之，这次是Latex大爆发，哈哈！
 # 参考 #
+
+1. [Scratchapixel 2.0](http://www.scratchapixel.com "Scratchapixel 2.0").
+2. [Physically Based Rendering, Second Edition: From Theory To Implementation](http://pbrt.org/) 
+
