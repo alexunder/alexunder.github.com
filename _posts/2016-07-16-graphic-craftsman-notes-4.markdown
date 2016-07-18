@@ -34,7 +34,7 @@ $$
 \vec{r}=2(\vec{l}.\vec{n})\vec{n}-\vec{l}
 $$
 
-随后，Blinn–Phong shading model又被提了出来，这个模型更易于计算，这个模型用了新的向量`\(\vec{e}\)`，即：
+随后，Blinn–Phong shading model又被提了出来，这个模型更易于计算，这个模型用了新的向量`\(\vec{h}\)`，即：
 
 $$
 \vec{h}=\frac{\vec{e}+\vec{l}}{\lvert\vec{e}+\vec{l}\rvert}
