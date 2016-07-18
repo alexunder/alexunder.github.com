@@ -69,7 +69,9 @@ Vec3f PhongMaterial::Shade(const Ray &ray, const Hit &hit, const Vec3f &dirToLig
 
 # 尾声 #
 
-这个section是我留着用来逗逼的吗？明明没啥用，每次都有。
+这个section是我留着用来逗逼的吗？明明没啥用，每次都有。不过这次秀一下之前Phong Shading的效果图:
+
+![output3_09.png](/images/notes/mit_graphic/output3_09.png  "output3_09.png")
 
 # 参考 #
 
