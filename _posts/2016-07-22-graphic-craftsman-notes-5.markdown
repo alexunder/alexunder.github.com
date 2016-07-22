@@ -55,6 +55,73 @@ for (j = 0; j < height; j++)
 
 # 阴影 #
 
+阴影是光在传播过程中，由于物体间的相互遮挡，其中的一个物体挡住了光的传播，从而在光线的相反方向上处于靠后面的物体接受的光辐射量减少，形成了阴影的效果。具体实现过程不需要数学计算，所以我在这里先大体描述一下算法过程：
+
+1. 像正常光线追踪的渲染方法一样，生成一个射线对象，即Ray objcet。
+2. 如果此射线与场景中的任意物体（只有一个物体，因为只取处在最前面的物体）有交集，计算出交点。
+3. 遍历场景中的光源体从交点出发，方向为当前光源的方向，形成一个新的Ray对象，再查看场景中是否有与此Ray对象有交点的物体。
+4. 如果有交点，则说明这个光源方向上已经被其他物体遮挡，形成阴影，则放弃当前的分支，什么也不做。如果没有，则继续传统的渲染。
+
+代码实现为:
+
+{% highlight cpp %}
+bool ishit = false;
+ishit = objGroups->intersect(ray, hit, tm);
+
+if (ishit)
+{
+    //The main
+    if (bounces == 0)
+        RayTree::SetMainSegment(ray, 0, hit.getT());
+
+    Material * pM = hit.getMaterial();
+    Vec3f normal = hit.getNormal();
+    Vec3f point = hit.getIntersectionPoint();
+
+    Vec3f diffuseColor = pM->getDiffuseColor();
+    pixelColor = diffuseColor * ambientLight; 
+
+    int k;
+    for (k = 0; k < numberLights; k++)
+    {
+        Light * plight = mParser->getLight(k);
+
+        Vec3f lightDir;
+        Vec3f lightColor;
+        float distance;
+        plight->getIllumination(point, lightDir, lightColor, distance);
+        float d = lightDir.Dot3(normal);
+
+        if (d < 0)
+            d = 0.0;
+
+        Vec3f tempColor = lightColor * diffuseColor;
+        tempColor *= d;
+        tempColor += pM->Shade(ray, hit, lightDir, lightColor);
+
+        if (mRenderShadow)
+        {
+            Ray shadowRay(point, lightDir);
+            Hit shadowHit;
+            //Be careful, tm should be larger than one
+            if (!objGroups->intersect(shadowRay, shadowHit, tm))
+            {
+                pixelColor += tempColor;
+            }
+            else
+            {   //Shadow ray debug
+                RayTree::AddShadowSegment(shadowRay, 0, shadowHit.getT());
+            }
+        }
+        else
+        {
+            pixelColor += tempColor;
+        }
+    }
+{% endhighlight %}
+
+关键的地方在if (mRenderShadow)的case中，如果新形成的射线shadowRay没有和其他物体产生交点，就将此光源的Phong Shading的结果加到最终颜色值里。
+
 # 反射 #
 
 # 折射 #
