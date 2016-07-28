@@ -124,6 +124,16 @@ if (ishit)
 
 # 反射 #
 
+反射是光线照到特殊材料上后将大部分光线又反射出去。其实图形学中，尤其是物理渲染中，对于反射有很多数学模型，比如BRDF(Bidirectional Reflectance Distribution Function), BSSRDF(Bidirectional Scattering-surface reflectance distribution function)。但是这些复杂的计算模型，我还没有研习到，所以在这里只是实现一个最简单的反射绘制方法。
+
+最关键的一步是求出反射光线的向量,一般的反射情景如图：
+
+![shad2-cosinespec.png](http://scratchapixel.com/images/upload/shading-intro2/shad2-cosinespec.png  "shad2-cosinespec.png")
+
+我们最终目的是要求出向量R的方向。根据反射的物理规律，光的入射角和反射角是一样的，即入射光向量L与相应点的法向量的角度和反射向量与法线的角度一样如图：
+
+![reflective_vector.png](/images/notes/mit_graphic/reflective_vector.png  "reflective_vector.png")
+
 # 折射 #
 
 # 尾声 #
