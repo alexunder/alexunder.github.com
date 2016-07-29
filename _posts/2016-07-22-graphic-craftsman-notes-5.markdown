@@ -126,16 +126,120 @@ if (ishit)
 
 反射是光线照到特殊材料上后将大部分光线又反射出去。其实图形学中，尤其是物理渲染中，对于反射有很多数学模型，比如BRDF(Bidirectional Reflectance Distribution Function), BSSRDF(Bidirectional Scattering-surface reflectance distribution function)。但是这些复杂的计算模型，我还没有研习到，所以在这里只是实现一个最简单的反射绘制方法。
 
+## 数学原理 ##
+
 最关键的一步是求出反射光线的向量,一般的反射情景如图：
 
 ![shad2-cosinespec.png](http://scratchapixel.com/images/upload/shading-intro2/shad2-cosinespec.png  "shad2-cosinespec.png")
 
-我们最终目的是要求出向量R的方向。根据反射的物理规律，光的入射角和反射角是一样的，即入射光向量L与相应点的法向量的角度和反射向量与法线的角度一样如图：
+我们最终目的是要求出向量`\(\vec{R}\)`的方向。根据反射的物理规律，光的入射角和反射角是一样的，即入射光向量`\(\vec{L}\)`与相应点的法向量的角度和反射向量与法线的角度一样如图：
 
-![reflective_vector.png](/images/notes/mit_graphic/reflective_vector.png  "reflective_vector.png")
+![reflective_vector.png](/images/notes/mit_graphic/reflective_vector.png "reflective_vector.png")
 
-# 折射 #
+如上图所示，假设分别有单位法向量`\(\vec{N}\)`，单位入射向量`\(\vec{L}\)`， 以及反射向量`\(\vec{R}\)`。需要注意的是，我们的计算模型中，入射向量是指向光源的向量。具体计算方法就是，将入射向量和反射向量末端连接，形成一个新的向量`\(\vec{X}\)`，方向`\(\vec{R}\)`指向`\(\vec{L}\)`，这样就组成了一个等腰三角形，根据向量加法，可以得到：
+
+$$
+\vec{L}-\vec{R}=\vec{X}
+$$
+
+$$
+\vec{R}=\vec{L}-\vec{X}
+$$
+
+然后，左边半个三角形用来协助计算`\(\vec{X}\)`。在这个小三角形当中，因为`\(\vec{L}\)`是单位长度的，所以可以利用夹角`\(\alpha\)`来表示和法向量重合的这个向量，根据三角函数，与法向量重合的这一边的长度为`\(\cos{\alpha}\)`,而`\(\cos{\alpha}\)`的值可以通过`\(\vec{L}\)`与`\(\vec{N}\)`的点乘获得：
+
+$$
+\cos{\alpha}=\vec{L}.\vec{N}
+$$
+
+可以得到与法向量重合的那条边的向量表达，即`\((\vec{N}.\vec{L})\vec{N}\)`
+
+$$
+\vec{X}=2(\vec{L}-(\vec{N}.\vec{L})\vec{N})
+$$
+
+最后得到反射向量的计算公式：
+
+$$
+\vec{R}=2(\vec{N}.\vec{L})\vec{N}-\vec{L}
+$$
+
+## 代码实现 ##
+
+首先根据Assignment描述，专门写一个函数来计算反射光的向量，即用上面推导出来的计算方式。
+
+{% highlight cpp %}
+Vec3f RayTracer::mirrorDirection(const Vec3f &normal, const Vec3f &incoming) const
+{
+    Vec3f N(normal);
+    Vec3f L(incoming);
+    N.Normalize();
+    L.Normalize();
+    float d = N.Dot3(L);
+    Vec3f reflection = (L - 2*d*N);
+    return reflection;
+}
+{% endhighlight %}
+
+因为入射向量是和前面的数学演算是相反的，所以代码稍有不同。求出发射向量后即可继续构造一个Ray对象，继续递归调用traceRay, 返回的颜色向量还要乘以反射颜色向量，最终加到像素的颜色。
+
+{% highlight cpp %}
+Vec3f rc = pM->getReflectiveColor();
+//Process the reflective situation
+if (rc.Length() > 0.0 && bounces < mBounces)
+{
+    Vec3f incomingDir = ray.getDirection();
+    Vec3f reflectiveDir = mirrorDirection(normal, incomingDir);
+    Ray reflectiveRay(point, reflectiveDir);
+    Hit reflectiveHit;
+    pixelColor += rc*traceRay(reflectiveRay, tm, bounces + 1, weight*rc.Length(),
+        indexOfRefraction, reflectiveHit);
+
+    float t = reflectiveHit.getT();
+    if (t < epsilon)
+        t = 10000.0;
+
+    RayTree::AddReflectedSegment(reflectiveRay, 0, t);
+}
+
+{% endhighlight %}
+
+这是局部处理反射的代码，我们最好从全局把握一下流程，在这里可以利用一下文学编程(Literate programming)
+
+{% highlight cpp %}
+bool ishit = false;
+ishit = objGroups->intersect(ray, hit, tm);
+
+if (ishit)
+{
+    <Get the Hiy info and related materials info>
+    <Calculate the product between diffuse color and ambient color>
+
+    int k;
+    for (k = 0; k < numberLights; k++)
+    {
+        <Do shading calculatations for every single light source>
+        <Shadow processing for every single light source>
+    }
+
+    <Calculating the reflective situation>
+    <Calculating the refraction>
+}
+{% endhighlight %}
 
 # 尾声 #
 
+前段时间，一直以为自己搞定了折射，等到写笔记的时候，才发现根本就没正确实现，于是返回头恶补，调试，拖了三四天终于搞定了，但是迫于折射计算的复杂性，我决定单开一篇note来记录。按照尾声的惯例，我放几个生成的效果图。
+
+先来一个阴影效果：
+
+![output4_13.png](/images/notes/mit_graphic/output4_13.png "output4_13.png")
+
+再来一个阴影加反射：
+
+![output4_04d.png](/images/notes/mit_graphic/output4_04d.png "output4_04d.png")
+
 # 参考 #
+
+1. [Scratchapixel 2.0](http://www.scratchapixel.com "Scratchapixel 2.0").
+2. [Mathematics for 3D Game Programming and Computer Graphics, Third Edition](https://www.amazon.com/Mathematics-Programming-Computer-Graphics-Third/dp/1435458869).
