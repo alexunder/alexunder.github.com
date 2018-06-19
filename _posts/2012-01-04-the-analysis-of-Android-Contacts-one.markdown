@@ -26,7 +26,6 @@ Contacts应用是由Google Android团队编写的Android原生应用。在应用
 	</intent-filter>
 {% endhighlight %}
 
-
 这是每次默认点击图标时的intent，这是ContactsListActivity，他继承自ListActivity：
 
 ![ContactsListActivity](\images\article\ContactsListActivity.PNG  "Android Contact")
@@ -107,7 +106,7 @@ private void registerProviderStatusObserver() {
     }
 {% endhighlight %}
 
-p. 这样就可以达到UI同步数据库的改变了。
+这样就可以达到UI同步数据库的改变了。
 
 ## SimContactsActiviy
 
