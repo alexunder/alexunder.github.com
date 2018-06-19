@@ -4,35 +4,34 @@ title: 纪念我那逝去的iphone开发
 category: blog
 ---
 
-h2. 前言
+# 前言
 
 我曾经拥有两台iphone,但不是同时拥有，他们先后都离我而去，至今黯然叹息。在那些拥有iphone的岁月里，作为程序员的我当然要寻求为她编程。但是在没有MAC电脑的前提下，这个过程相当艰辛，充满荆棘：首先是越狱；然后为了在ubuntu上编译iphone tool chains的环境，我痛苦的纠结了多次，渡过了不少不眠夜；后来，编译环境弄好后，我移植了我初学程序时在Windows PC上写的俄罗斯方块，调试只能用文件记录，诸多不方便，经过一番折腾，我的tetris终于跑起来了。
 
-正当我准备继续为iphone努力的时候，我的第二个iphone很不幸的丢失了，我不愿意再买一个iphone了，我想我与iphone注定无缘。我的iphone开发之路就此在中道奔殂。为了纪念那逝去的岁月，为了纪念我的辛劳，我将我当初编译tool chains的笔记呈现于此，以及将Tetris的代码push进github: "https://github.com/alexunder/iphonedev":https://github.com/alexunder/iphonedev ，不求能对别人有所帮助，但求对得起自己。废话不说了。
+正当我准备继续为iphone努力的时候，我的第二个iphone很不幸的丢失了，我不愿意再买一个iphone了，我想我与iphone注定无缘。我的iphone开发之路就此在中道奔殂。为了纪念那逝去的岁月，为了纪念我的辛劳，我将我当初编译tool chains的笔记呈现于此，以及将Tetris的代码push进github: [https://github.com/alexunder/iphonedev](https://github.com/alexunder/iphonedev) ，不求能对别人有所帮助，但求对得起自己。废话不说了。
 
-h2. 编译的环境的构建
+# 编译的环境的构建
 
-
-h3. Foreword
+## Foreword
 
 如果要编译可以在iphone上运行的程序，我们可以有两种选择：
 
-# 使用MAC系统，即是当前的Mac OS X Leopard系统，然后下载iphone sdk。此方法不适合我等geek之辈，装MAC得费不少功夫，虽说这个方法是开发iphone软件的官方推荐方法，但是至少不适合我。
-# 开源工具链。这是极为牛逼的黑客通过逆向手段得到的方法，可以在Gnu linux上进行iphone开发。
+- 使用MAC系统，即是当前的Mac OS X Leopard系统，然后下载iphone sdk。此方法不适合我等geek之辈，装MAC得费不少功夫，虽说这个方法是开发iphone软件的官方推荐方法，但是至少不适合我。
+- 开源工具链。这是极为牛逼的黑客通过逆向手段得到的方法，可以在Gnu linux上进行iphone开发。
 
 
-h3. Start here
+## Start here
 
 系统准备：我的iphone目前的版本是3.1.2，所以我就要以这个版本为基础构造编译环境。在构造之前，我们需要三样东西：
-# 第一个就是iphone_sdk_3.1.2，官方用法需要它，我们也需要它，之前的链接不能用了，所以我就删除了，应该在官网上还能找到。
-# 还有一个就是iphone 3.1.2 os firmware，即系统固件3.1.2。
-# 在google code上的托管项目中有黑客们建立的一个项目，目的是在linux上构建编译iphone的环境，这是其链接: "http://code.google.com/p/iphonedevonlinux/wiki/Installation":http://code.google.com/p/iphonedevonlinux/wiki/Installation
+
+- 第一个就是iphone_sdk_3.1.2，官方用法需要它，我们也需要它，之前的链接不能用了，所以我就删除了，应该在官网上还能找到。
+- 还有一个就是iphone 3.1.2 os firmware，即系统固件3.1.2。
+- 在google code上的托管项目中有黑客们建立的一个项目，目的是在linux上构建编译iphone的环境，这是其链接: [http://code.google.com/p/iphonedevonlinux/wiki/Installation](http://code.google.com/p/iphonedevonlinux/wiki/Installation)
 
 
-h3. Follow here
+## Follow here
 
-我选择的 gnu linux 是久负盛名的Ubuntu 9.10.
-首先，我们要用svn将编译需要的一些脚本文件check out出来，命令如下：
+我选择的 gnu linux 是久负盛名的Ubuntu 9.10.首先，我们要用svn将编译需要的一些脚本文件check out出来，命令如下：
 
 {% highlight bash %}
 mkdir -p ~/Projects/iphone/
@@ -108,12 +107,12 @@ chmod u+x toolchain.sh
 
 如果遇到"We need the decryption key for 018-6028-014.dmg."的问题，可以将toolchain.sh相关位置改成以下模样：
 
-!/images/article/iphone_tool_chain_sh.png!
+[Tool Chain](images/article/iphone_tool_chain_sh.png  "Iphone Development")
 
 其实就是将以下字符串赋给DECRYPTION_KEY_SYSTEM：
 DECRYPTION_KEY_SYSTEM= “a8a886d56011d2d98b190d0a498f6fcac719467047639cd601fd53a4a1d93c24e1b2ddc6”。
 
-h3. Going here
+## Going here
 
 当./toolchain.sh build执行完毕，没有错误的话，我们的工具链就编译完毕了，在toolchain\toolchain目录下生成了几个目录：bld, pre,src,sys这几个目录，包括了编译iphone软件所需要的工具，代码，头文件，以及库，在pre\bin下有我们所需要的交叉编译器，如果要编译toolchain\apps\HelloToolchain目录下的makefile 文件，还必须将交叉编译器arm-apple-darwin9-gcc的路径加入到Linux的环境变量中去，比如加入到/home/xxx/.profile文件当中如下命令：
 
@@ -143,14 +142,14 @@ chmod -R 755 /Applications/HelloToolchain.app
 ldid -S /Applications/HelloToolchain.app/HelloToolchain
 {% endhighlight %}
 
-h3. End here
+## End here
 
 HelloToolchain成功运行，这篇笔记就该告一段落了。
 
-h2. Programming 笔记
+# Programming 笔记
 
 
-h3. Calling the object’s member function.
+## Calling the object’s member function.
 
 Given an object named myWidget, a message can be sent to its powerOn method this way:
 
@@ -170,7 +169,7 @@ The C equivalent might declare a function inside of its flat namespace:
 returnValue = widget_powerOn(myWidget);
 {% endhighlight %}
 
-h3. Class and method declarations.
+## Class and method declarations.
 
 {% highlight objc %}
 #import <Foundation/Foundation.h>
@@ -191,6 +190,7 @@ h3. Class and method declarations.
 @end
 {% endhighlight %}
 
+
 预处理命令#import代替#include，用来引用所需要的头文件。
 @interface命令定义的interface 类似于C++中的类的声明：
 
@@ -203,10 +203,10 @@ h3. Class and method declarations.
 
 +号表示是non-static member function，-表示static member function，member function 在括号外面声明。
 
-h3. About UIKit
+## About UIKit
 
 
-h4. 创建windows.
+### 创建windows.
 
 获取iphone的全屏幕的尺寸数据：
 
@@ -223,7 +223,8 @@ UIWindow *window = [ UIWindow alloc ];
 [ window initWithContentRect: windowRect ];
 {% endhighlight %}
 
-h4. 创建view.
+
+### 创建view.
 
 {% highlight objc %}
 CGRect viewRect = [ UIHardware fullScreenApplicationContentRect ];
@@ -231,7 +232,7 @@ viewRect.origin.x = viewRect.origin.y = 0.0;
 UIView *mainView = [ [ MainView alloc ] initWithFrame: viewRect ];
 {% endhighlight %}
 
-h4. 显示view.
+### 显示view.
 
 {% highlight objc %}
 [ window setContentView: mainView ];
@@ -256,7 +257,7 @@ h4. 对view的继承.
 initWithFrame是初始化的时候调用的函数，dealloc是退出析构的时候调用。这两个函数是继承类必须继承的函数。
 
 
-h2. 参考资料
+# 参考资料
 
-# "http://code.google.com/p/iphonedevonlinux/wiki/Installation":http://code.google.com/p/iphonedevonlinux/wiki/Installation  
-# iphone developer guide
+1 [http://code.google.com/p/iphonedevonlinux/wiki/Installation](http://code.google.com/p/iphonedevonlinux/wiki/Installation)
+2 iphone developer guide
