@@ -68,6 +68,6 @@ term-ansicolor (1.0.7)
 
 我直接clone了Jekyll开发者兼github联合创始人mojombo的blog数据，我将index.html,post.html等文件一顿乱改，又删除了丫以前的文章，然后git push上去，页面果然出来了。我虽然不能在本地预览我的文章，但是我可以通过不停的git push来预览，仍然可以装逼的Bloging like a hacker.
 
-#. 其他
+# 其他
 
 可以免费的使用酷逼了的github&Jekyll提供的blog服务，自然很高兴。还有，这几个月来我经历了一次我个人使用计算机的革命：我删除了Windows XP, 彻底投向了Ubuntu阵营，目前来看，有时还需virtualbox里的WinXP的小帮助。但是我已经决意和Microsoft Windows说拜拜了。

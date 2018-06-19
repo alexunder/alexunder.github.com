@@ -259,5 +259,5 @@ initWithFrame是初始化的时候调用的函数，dealloc是退出析构的时
 
 # 参考资料
 
-1 [http://code.google.com/p/iphonedevonlinux/wiki/Installation](http://code.google.com/p/iphonedevonlinux/wiki/Installation)
-2 iphone developer guide
+1. [http://code.google.com/p/iphonedevonlinux/wiki/Installation](http://code.google.com/p/iphonedevonlinux/wiki/Installation)
+2. iphone developer guide

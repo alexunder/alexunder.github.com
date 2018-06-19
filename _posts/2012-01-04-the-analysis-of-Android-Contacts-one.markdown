@@ -43,13 +43,13 @@ ContactsListActivity::OnCreate
 
 ![ContactItemListAdapter](\images\article\ContactItemListAdapter.PNG  "Android Contact")
 
-p. CursorAdapter负责将从ContentProvider中获得数据对象Cursor填充到相应的View中，新建的时候将当前的Activity的this对象传入，如果需要更新Cursor数据，在查询或改变的时候，调用ContactItemListAdapter::setSuggestionsCursor来设置新的Cursor数据，通过实现getView函数来用新数据刷新UI, getView定义如下：
+CursorAdapter负责将从ContentProvider中获得数据对象Cursor填充到相应的View中，新建的时候将当前的Activity的this对象传入，如果需要更新Cursor数据，在查询或改变的时候，调用ContactItemListAdapter::setSuggestionsCursor来设置新的Cursor数据，通过实现getView函数来用新数据刷新UI, getView定义如下：
 
 {% highlight java %}
 public abstract View getView (int position, View convertView, ViewGroup parent)
 {% endhighlight %}
 
-p. 在getView中如果有可重用的老view(即convertView)的话,可直接使用，如果老的为null,代码中调用newView来新建view，通过bindView来绑定数据，以上三个函数都是由ContactItemListAdapter来实现。
+在getView中如果有可重用的老view(即convertView)的话,可直接使用，如果老的为null,代码中调用newView来新建view，通过bindView来绑定数据，以上三个函数都是由ContactItemListAdapter来实现。
 
 通过调用ListView::setOnScrollListener来设置当用户上拉下拉ListView所需要做的处理，传进去的是ContactItemListAdapter对象，因为前文已述：ContactItemListAdapter还继承了OnScrollListener接口，ContactItemListAdapter实现了：
 
@@ -60,7 +60,7 @@ public void onScrollStateChanged(AbsListView view, int scrollState)
 
 ## 关于查询联系人
 
-p. 在ContactsListActivity类中有一个对象，如下定义：
+在ContactsListActivity类中有一个对象，如下定义：
 
 {% highlight java %}
 private QueryHandler mQueryHandler;
@@ -70,7 +70,7 @@ QueryHandler有如下继承关系：
 
 ![QueryHandler](\images\article\QueryHandler.PNG  "Android Contact")
 
-p. AsyncQueryHandler顾名思义就是异步的对数据库进行操作的封装，在Contacts中其他部分多次用到。我们可以调用如下接口实现对数据库的操作：
+AsyncQueryHandler顾名思义就是异步的对数据库进行操作的封装，在Contacts中其他部分多次用到。我们可以调用如下接口实现对数据库的操作：
 
 {% highlight java %}
 public final void cancelOperation (int token)
