@@ -6,6 +6,7 @@ server_port: 4000
 permalink:   date
 markdown: kramdown 
 pygments: true
+highlighter: rouge
 
 kramdown:
   input:  GFM
