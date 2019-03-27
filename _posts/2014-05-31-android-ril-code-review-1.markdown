@@ -4,15 +4,15 @@ title:  Android RIL code review 1
 category: Android
 ---
 
-#RIL Overview#
+# RIL Overview
 
 RIL is the abbreviation of "Radio Interface Layer". In the android software platform, the RIL sub system communicates with BaseBand chip downwards, and provides the android framework with phones' related services upwards, such as Call, sms, etc. Its location in android softeware  stack is shown in graph below:
 
-![alt text](/images/notes/RIL-architecture.PNG"RIL-architecture.PNG")
+![alt text](/images/notes/RIL-architecture.PNG "RIL-architecture.PNG")
 
 In the lower layer, RIL communicates with Baseband chip via the linux virtual UART driver, we don't want to cover some details about the interactions between the UART driver and the real baseband chip, in this place, this serial port is on behalf of the baseband chip. In the upper layer, RIL communicates with the framework via socket. The java layer in framework is not our point, what we will talk about is the green part in above graph.
 
-#The compoents in RIL#
+# The compoents in RIL
 
 The google company seprated the RIL into three parts in order to protect the IP of the OEM. These parts are: RIL daemon application(RILD), libril.so and reference-ril.so. The RILD and the libril.so reference each other in static linking, their implementations are open to us, but reference-ril.so is the reference implementation which is provided by Google to OEMs. Because of the diversity and the complexity of all kinds of the mobile network. The oem vendors have their own process routines in their baseband chip, they may don't want to open the source code, so they implement their own vendor-ril.so. In order to loose coupling between the private module and the open source module, RILD uses the dynamic loading method to communicate with vendor-ril.so. Their source codes are at:
 
@@ -24,7 +24,7 @@ The google company seprated the RIL into three parts in order to protect the IP 
 
 Furthermore, the libril.so and the reference-ril.so have the different functions in RIL architecture, libril.so is used to handle I/O messages with Android Framework via socket. But reference-ril.so is responsible for communicating with the serial port. 
 
-#Start from RILD#
+# Start from RILD
 
 The entire RIL system is initiated by the invoking RILD command from shell, so let's start with it.
 
@@ -119,4 +119,4 @@ We will talk about it with more details in later section. The last invoking is R
 
 For a summay of the rild rutine, there is a graph below: 
 
-![alt text](/images/notes/RIL_rutine.PNG"RIL_rutine.PNG")
+![alt text](/images/notes/RIL_rutine.PNG "RIL_rutine.PNG")
