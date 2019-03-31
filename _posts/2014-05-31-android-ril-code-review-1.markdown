@@ -6,11 +6,11 @@ category: Android
 
 # RIL Overview
 
-RIL is the abbreviation of "Radio Interface Layer". In the android software platform, the RIL sub system communicates with BaseBand chip downwards, and provides the android framework with phones' related services upwards, such as Call, sms, etc. Its location in android softeware  stack is shown in graph below:
+RIL is the abbreviation of "Radio Interface Layer". In the Android software platform, the RIL subsystem communicates with BaseBand chip downwards and provides the Android framework with phones' related services upwards, such as Call, SMS, etc. Its location in android software  stack is shown in the graph below:
 
 ![alt text](/images/notes/RIL-architecture.PNG "RIL-architecture.PNG")
 
-In the lower layer, RIL communicates with Baseband chip via the linux virtual UART driver, we don't want to cover some details about the interactions between the UART driver and the real baseband chip, in this place, this serial port is on behalf of the baseband chip. In the upper layer, RIL communicates with the framework via socket. The java layer in framework is not our point, what we will talk about is the green part in above graph.
+In the lower layer, RIL communicates with Baseband chip via the Linux virtual UART driver, we don't want to cover some details about the interactions between the UART driver and the real baseband chip, in this place, this serial port is on behalf of the baseband chip. In the upper layer, RIL communicates with the framework via socket. The Java layer in the framework is not our point, what we will talk about is the green part in the above graph.
 
 # The compoents in RIL
 
@@ -22,11 +22,11 @@ The google company seprated the RIL into three parts in order to protect the IP 
 	libril--
 		hardware/ril/libril   
 
-Furthermore, the libril.so and the reference-ril.so have the different functions in RIL architecture, libril.so is used to handle I/O messages with Android Framework via socket. But reference-ril.so is responsible for communicating with the serial port. 
+Furthermore, the libril.so and the reference-ril.so have different functions in RIL architecture, libril.so is used to handle I/O messages with Android Framework via socket. But reference-ril.so is responsible for communicating with the serial port. 
 
 # Start from RILD
 
-The entire RIL system is initiated by the invoking RILD command from shell, so let's start with it.
+The entire RIL system is initiated by the invoking RILD command from the shell, so let's start with it.
 
 There is a static structure object in rild.c:
 
@@ -39,7 +39,7 @@ static struct RIL_Env s_rilEnv = {
 {% endhighlight %}
 
 
-It includes three function pointers, their implementaions are at libril.so, and they will be used by vendor ril. On the contrary, there is another similar structure defined in Ril.h:
+It includes three function pointers, their implementations are at libril.so, and they will be used by the vendor ril. On the contrary, there is another similar structure defined in Ril.h:
 
 {% highlight c %}
 typedef struct {
@@ -98,7 +98,7 @@ RIL_startEventLoop(void) {
 }
 {% endhighlight %}
 
-We will discuss this function's detail in next section, so let's continue to check the main function's rutine of RILD, after invoking RIL_startEventLoop, we get the function pointer of "RIL_Init" in vendor ril, then after checking the validation of the function pointer, we invoke it with main's input parameters:
+We will discuss this function's detail in the next section, so let's continue to check the main function's routine of RILD, after invoking RIL_startEventLoop, we get the function pointer of "RIL_Init" in vendor ril, then after checking the validation of the function pointer, we invoke it with main's input parameters:
 
 {% highlight c %}
 rilArgv[0] = argv[0];
@@ -115,8 +115,8 @@ The RIL_Init implemented in vendor ril will do some low layer's jobs:
 * Launching the mainLoop thread to handle hardware , including initializing the UART, reading data from the UART. 
 * Returning five function pointers that will be used in libril.so to RILD. 
 
-We will talk about it with more details in later section. The last invoking is RIL_register, we transfer the previous function pointers into libril.so via this function. Inner the RIL_register, it connects the socket to communicate the framework, and launch the listenCallback event, it's like a engine can always trigger the I/O jobs. 
+We will talk about it with more details in a later section. The last invoking is RIL_register, we transfer the previous function pointers into libril.so via this function. Inner the RIL_register, it connects the socket to communicate the framework, and launch the listenCallback event, it's like an engine can always trigger the I/O jobs. 
 
-For a summay of the rild rutine, there is a graph below: 
+For a summary of the rild routine, there is a graph below: 
 
 ![alt text](/images/notes/RIL_rutine.PNG "RIL_rutine.PNG")
