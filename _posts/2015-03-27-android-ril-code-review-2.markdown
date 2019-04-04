@@ -4,14 +4,14 @@ title:  Android RIL code review 2
 category: Android
 ---
 
-#Overview#
+# Overview
 In this section, I will discuss the details inside the libril.so, these details include:
 
 * RIL event mechanism.
 * Communications with frameworks.
 * Supports for vendor RIL.
 
-# RIL event mechanism #
+# RIL event mechanism
 
 As the last section's show us, it's clear that RIL_startEventLoop create a thread named eventloop, its code will show below:
 
@@ -73,7 +73,7 @@ It invokes ril_event_init to initialize two ril_event structure objects: timer_l
     }
 {% endhighlight %}
 
-In the end of this function, it also zeros a ril_event structure pointer array  which has 8 elements: watch_table. We will know these objects later on. So let's check the structure ril_event:
+At the end of this function, it also zeros a ril_event structure pointer array which has 8 elements: watch_table. We will know these objects later on. So let's check the structure ril_event:
 
 {% highlight c %}
     struct ril_event {
@@ -133,7 +133,7 @@ static void processWakeupCallback(int fd, short flags, void *param) {
 }
 {% endhighlight %}
 
-We can write some data to the write fd of the pipe to wake up the thread, it seems that no reason to do that. But the interesting thing is that every time  if there is the new ril_event object will be added, the trigger function  "triggerEvLoop" will be invoked. The rilEventAddWakeup detail will show this:
+We can write some data to the write fd of the pipe to wake up the thread, it seems that no reason to do that. But the interesting thing is that every time if there is the new ril_event object, will be added, the trigger function  "triggerEvLoop" will be invoked. The rilEventAddWakeup detail will show this:
 
 {% highlight c %}
    static void rilEventAddWakeup(struct ril_event *ev) {
@@ -157,9 +157,9 @@ I guess if rilEventAddWakeup will be called in another thread, this invoking wil
     }
 {% endhighlight %}
 
-## The core part of eventloop ##
+## The core part of eventloop
 
-The most important part of eventloop is ril_event_loop, it uses select system call to manage some file descriptors. And it has some details need to analysis.
+The most important part of eventloop is ril_event_loop, it uses select system call to manage some file descriptors. And it has some details need to analyze.
 
 {% highlight c %}
     void ril_event_loop()
@@ -267,15 +267,15 @@ If we have the pending timer event, we will compare the first element's timeout 
     }
 {% endhighlight %}
 
-As previous code snippets show us, the timer_list was initialized by init_list in ril_event_init, so if the timer_list has no elements, the timer_list's next pointer and prev pointer all point to itself. We add the relative time interval to the current time, then set this sum to the new ril_event ev, then find the place that keep the larger one located in the back, so the first one is the oldest event.
+As previous code snippets show us, the timer_list was initialized by init_list in ril_event_init, so if the timer_list has no elements, the timer_list's next pointer and prev pointer all point to itself. We add the relative time interval to the current time, then set this sum to the new ril_event ev, then find the place that keeps the larger one located in the back, so the first one is the oldest event.
 
-After that, we can confirm the timeout value that will be passed into select system call. If the invoking to select has an error, it will break the dead loop, but the error from interrupt is ignored .If some file descriptors' data are available, the final 3 functions will be invoked:
+After that, we can confirm the timeout value that will be passed into the select system call. If the invoking to select has an error, it will break the dead loop, but the error from interrupt is ignored. If some file descriptors' data are available, the final 3 functions will be invoked:
 
 * processTimeouts.
 * processReadReadies
 * firePending
 
-## The final tree kicks ##
+## The final tree kicks
 
 If the data comes, we left three kicks. So let's dive into the first kick:
 
@@ -305,7 +305,7 @@ If the data comes, we left three kicks. So let's dive into the first kick:
     }
 {% endhighlight %}
 
-It's simple to interprate: we traverse the time_list to find the event whose timeout is smaller then the current time,  in other words, we want to find the timeout event, and remove it from the timer_list, then add to the pending_list.
+It's simple to interpret: we traverse the time_list to find the event whose timeout is smaller than the current time,  in other words, we want to find the timeout event, and remove it from the timer_list, then add to the pending_list.
 
 The second kick:
 
@@ -331,7 +331,7 @@ The second kick:
     }
 {% endhighlight %}
 
-In this function, we scan watch_table to check if any element is ready for receiving data, then add it to the pending_list. Whether we delete the ready item from watch_table depends on persist value in this item.
+In this function, we scan watch_table to check if an element is ready for receiving data, then add it to the pending_list. Whether we delete the ready item from watch_table depends on persist value in this item.
 
 The final kick:
 
@@ -352,6 +352,6 @@ The final kick:
 
 And now, the pending_list includes all the events will be ready to read, so we traverse the pending_list, fire all of them, invoking their own callback functions.
 
-# Temporary End #
+# Temporary End
 
 This note is long enough, the left content will be delivered in the following post.
